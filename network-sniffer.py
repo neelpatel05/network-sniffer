@@ -46,4 +46,8 @@ def tcp_packet(data):
 	flag_fin =  (offset_reserved_flag & 1
 	return src_post, dest_post, sequence, acknowledgement, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, data[offset:]
 
+def udp_packet(data):
+	src_port, dest_port, checksum = struct.unpack('! B B H', data[:4])
+	return src_port, dest_port, checksum, data[4:]
+
 main()
