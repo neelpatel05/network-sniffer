@@ -15,9 +15,9 @@ def ethernet_frame(data):
     return get_mac_addr(destination_mac), get_mac_addr(source_mac), socket.htons(protocol), data[14:]
 
 def get_mac_addr(bytes_addr):
-    bytes_string = map("{:02x}".format, bytes_addr)
-    mac_addr = ':'.join(bytes_string).upper()
-    return mac_addr
+	bytes_string = map("{:02x}".format, bytes_addr)
+	mac_addr = ':'.join(bytes_string).upper()
+	return mac_addr
 
 def ipv4_packet(data):
 	version_header_length = data[0]
@@ -30,5 +30,20 @@ def ipv4_packet(data):
 
 def ipv4(addr):
 	return ':'.join(map(str, addr))
+
+def icmp_packet(data):
+	icmp_type, code, checksum = struct.unpack('! B B H', data[:4])
+	return icmp_type, code, checksum, data[4:]
+
+def tcp_packet(data):
+	(src_post, dest_post, sequence, acknowledgement, offset_reserved_flag) = struct.unpack('! H H L L H', data[:14])
+	offset = (offset_reserved_flag >> 12) * 4
+	flag_urg =  (offset_reserved_flag & 32) >> 5
+	flag_ack =  (offset_reserved_flag & 16) >> 5
+	flag_psh =  (offset_reserved_flag & 8) >> 5
+	flag_rst =  (offset_reserved_flag & 4) >> 5
+	flag_syn =  (offset_reserved_flag & 2) >> 5
+	flag_fin =  (offset_reserved_flag & 1
+	return src_post, dest_post, sequence, acknowledgement, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, data[offset:]
 
 main()
